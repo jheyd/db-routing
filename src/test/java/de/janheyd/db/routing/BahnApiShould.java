@@ -16,5 +16,14 @@ public class BahnApiShould {
 		assertThat(location, is(new Location("008000191", "Karlsruhe Hbf")));
 	}
 
+	@Test
+	public void findOldenburg() throws Exception {
+		BahnApi bahnApi = new BahnApi();
+
+		Location location = bahnApi.findLocationByName("Oldenburg").getFirstMatch();
+
+		assertThat(location, is(new Location("008000291", "Oldenburg(Oldb)")));
+	}
+
 }
 
