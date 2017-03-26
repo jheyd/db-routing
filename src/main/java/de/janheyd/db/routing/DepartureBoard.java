@@ -9,6 +9,13 @@ public class DepartureBoard {
 	@JsonProperty("Departure")
 	public List<Departure> departures;
 
+	public DepartureBoard() {
+	}
+
+	public DepartureBoard(List<Departure> departures) {
+		this.departures = departures;
+	}
+
 	public List<Departure> getDepartures() {
 		return departures;
 	}

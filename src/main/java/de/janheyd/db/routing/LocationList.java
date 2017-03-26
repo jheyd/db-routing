@@ -9,6 +9,13 @@ public class LocationList {
 	@JsonProperty("StopLocation")
 	public List<Location> stopLocation;
 
+	public LocationList() {
+	}
+
+	public LocationList(List<Location> locations) {
+		this.stopLocation = locations;
+	}
+
 	public Location getFirstMatch() {
 		return stopLocation.get(0);
 	}
