@@ -2,7 +2,6 @@ package de.janheyd.db.routing;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +32,9 @@ public class TravelSearch {
 					for (Stop arrivalStop : arrival.stops) {
 						if (departureStop.getLocation().equals(arrivalStop.getLocation()))
 							return Optional.of(new Route(
-									new Stop(start, LocalDateTime.MIN, LocalDateTime.MIN),
+									departure.getStop(start),
 									new Stop(departureStop.getLocation(), departureStop.getArrival(), arrivalStop.getDeparture()),
-									new Stop(destination, LocalDateTime.MAX, LocalDateTime.MAX)));
+									arrival.getStop(destination)));
 					}
 				}
 			}
