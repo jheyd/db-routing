@@ -1,12 +1,12 @@
 package de.janheyd.db.routing;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,46 +21,45 @@ public class TravelSearchShould {
 	public static final Location KARLSRUHE = new Location("008000191", "Karlsruhe Hbf");
 	private static final Location BERLIN = new Location("123456789", "Berlin Hbf");
 
-	@Test
-	public void findDirectRoute() throws Exception {
-		BahnApi bahnApi = mock(BahnApi.class);
+	BahnApi bahnApi = mock(BahnApi.class);
+	TravelSearch travelSearch = new TravelSearch(bahnApi);
+
+	@Before
+	public void setUp() throws Exception {
 		when(bahnApi.findLocationByName("Oldenburg")).thenReturn(new LocationList(asList(OLDENBURG)));
 		when(bahnApi.findLocationByName("Karlsruhe")).thenReturn(new LocationList(asList(KARLSRUHE)));
-		Departure departure = new Departure(asList(
-				new Stop(OLDENBURG, LocalDateTime.of(DATE, LocalTime.of(4, 0)), LocalDateTime.of(DATE, LocalTime.of(6, 0))),
-				new Stop(KARLSRUHE, LocalDateTime.of(DATE, LocalTime.of(7, 0)), LocalDateTime.of(DATE, LocalTime.of(8, 0)))
-		));
-		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(departure)));
-		TravelSearch travelSearch = new TravelSearch(bahnApi);
+	}
 
-		Optional<Route> route = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1));
+	@Test
+	public void findDirectRoute() throws Exception {
+		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(
+				new Departure(asList(createStop(OLDENBURG, 4, 6), createStop(KARLSRUHE, 7, 8)))
+		)));
 
-		List<Stop> stops = route.get().getStops();
+		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
+
 		assertThat(stops.get(0).getLocation(), is(OLDENBURG));
 		assertThat(stops.get(stops.size() - 1).getLocation(), is(KARLSRUHE));
 	}
 
 	@Test
 	public void findRouteWithOneChange() throws Exception {
-		BahnApi bahnApi = mock(BahnApi.class);
-		when(bahnApi.findLocationByName("Oldenburg")).thenReturn(new LocationList(asList(OLDENBURG)));
-		when(bahnApi.findLocationByName("Karlsruhe")).thenReturn(new LocationList(asList(KARLSRUHE)));
-		Departure departure = new Departure(asList(
-				new Stop(OLDENBURG, LocalDateTime.of(DATE, LocalTime.of(4, 0)), LocalDateTime.of(DATE, LocalTime.of(6, 0))),
-				new Stop(BERLIN, LocalDateTime.of(DATE, LocalTime.of(7, 0)), LocalDateTime.of(DATE, LocalTime.of(8, 0)))
-		));
-		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(departure)));
-		Arrival arrival = new Arrival(asList(
-				new Stop(BERLIN, LocalDateTime.of(DATE, LocalTime.of(8, 0)), LocalDateTime.of(DATE, LocalTime.of(9, 0))),
-				new Stop(KARLSRUHE, LocalDateTime.of(DATE, LocalTime.of(10, 0)), LocalDateTime.of(DATE, LocalTime.of(11, 0)))
-		));
-		when(bahnApi.getArrivalSchedule(KARLSRUHE, DATE, LocalTime.of(5, 0))).thenReturn(new ArrivalBoard(asList(arrival)));
-		TravelSearch travelSearch = new TravelSearch(bahnApi);
+		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(
+				new Departure(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)))
+		)));
+		when(bahnApi.getArrivalSchedule(KARLSRUHE, DATE, LocalTime.of(5, 0))).thenReturn(new ArrivalBoard(asList(
+				new Arrival(asList(createStop(BERLIN, 8, 9), createStop(KARLSRUHE, 10, 11)))
+		)));
 
-		Optional<Route> route = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1));
+		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
 
-		List<Stop> stops = route.get().getStops();
 		assertThat(stops.get(0).getLocation(), is(OLDENBURG));
 		assertThat(stops.get(stops.size() - 1).getLocation(), is(KARLSRUHE));
+	}
+
+	private Stop createStop(Location location, int arrivalHour, int departureHour) {
+		LocalDateTime arrival = LocalDateTime.of(DATE, LocalTime.of(arrivalHour, 0));
+		LocalDateTime departure = LocalDateTime.of(DATE, LocalTime.of(departureHour, 0));
+		return new Stop(location, arrival, departure);
 	}
 }
