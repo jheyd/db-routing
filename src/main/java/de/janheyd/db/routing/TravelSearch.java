@@ -2,6 +2,7 @@ package de.janheyd.db.routing;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,19 +28,27 @@ public class TravelSearch {
 			return directTrip;
 		List<Arrival> arrivals = bahnApi.getArrivalSchedule(destination, date, LocalTime.of(5, 0)).getArrivals();
 		for (Departure departure : departures) {
-			for (Arrival arrival : arrivals) {
-				for (Stop departureStop : departure.stops) {
+			for (Stop departureStop : departure.stops) {
+				for (Arrival arrival : arrivals) {
 					for (Stop arrivalStop : arrival.stops) {
-						if (departureStop.getLocation().equals(arrivalStop.getLocation()))
-							return Optional.of(new Route(
-									departure.getStop(start),
-									new Stop(departureStop.getLocation(), departureStop.getArrival(), arrivalStop.getDeparture()),
-									arrival.getStop(destination)));
+						if (departureStop.getLocation().equals(arrivalStop.getLocation())) {
+							Stop firstStop = departure.getStop(start);
+							Stop lastStop = arrival.getStop(destination);
+							Stop changeStop = createChangeStop(departureStop, arrivalStop);
+							return Optional.of(new Route(firstStop, changeStop, lastStop));
+						}
 					}
 				}
 			}
 		}
 		return Optional.empty();
+	}
+
+	private Stop createChangeStop(Stop departureStop, Stop arrivalStop) {
+		Location changeLocation = departureStop.getLocation();
+		LocalDateTime changeArrival = departureStop.getArrival();
+		LocalDateTime changeDeparture = arrivalStop.getDeparture();
+		return new Stop(changeLocation, changeArrival, changeDeparture);
 	}
 
 	private List<Stop> getStops(Departure departure) {
