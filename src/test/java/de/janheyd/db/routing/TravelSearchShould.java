@@ -48,7 +48,7 @@ public class TravelSearchShould {
 				new Departure(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)))
 		)));
 		when(bahnApi.getArrivalSchedule(KARLSRUHE, DATE, LocalTime.of(5, 0))).thenReturn(new ArrivalBoard(asList(
-				new Arrival(asList(createStop(BERLIN, 8, 9), createStop(KARLSRUHE, 10, 11)))
+				new Arrival(asList(createStop(BERLIN, 9, 10), createStop(KARLSRUHE, 11, 12)))
 		)));
 
 		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
