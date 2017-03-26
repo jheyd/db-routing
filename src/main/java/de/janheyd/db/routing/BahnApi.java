@@ -48,6 +48,11 @@ public class BahnApi {
 				+ "&time=" + time);
 	}
 
+	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) throws IOException{
+		URL url = buildArrivalScheduleUrl(location, date, time);
+		return objectMapper.readValue(url, ArrivalBoardResponse.class).arrivalBoard;
+	}
+
 	private URL buildArrivalScheduleUrl(Location location, LocalDate date, LocalTime time) throws MalformedURLException {
 		return new URL(API_BASE
 				+ "/arrivalBoard"
@@ -58,7 +63,4 @@ public class BahnApi {
 				+ "&time=" + time);
 	}
 
-	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) {
-		throw new UnsupportedOperationException();
-	}
 }

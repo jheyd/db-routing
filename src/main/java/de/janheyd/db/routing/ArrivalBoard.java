@@ -1,9 +1,16 @@
 package de.janheyd.db.routing;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class ArrivalBoard {
-	private List<Arrival> arrivals;
+
+	@JsonProperty("Arrival")
+	public List<Arrival> arrivals;
+
+	public ArrivalBoard() {
+	}
 
 	public ArrivalBoard(List<Arrival> arrivals) {
 		this.arrivals = arrivals;

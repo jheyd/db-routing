@@ -45,6 +45,20 @@ public class BahnApiShould {
 				"IC 2034", "IC 1934", "IC 2439", "IC 2032", "ICE 841"));
 	}
 
+	@Test
+	public void get1KarlsruheArrivalWithCorrectTrainName() throws Exception {
+		BahnApi bahnApi = new BahnApi();
+
+		ArrivalBoard arrivalBoard = bahnApi.getArrivalSchedule(new Location("008000191", "Karlsruhe Hbf"),
+				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
+
+		assertThat(getTrainNames(arrivalBoard).get(0), is("EN 471"));
+	}
+
+	private List<String> getTrainNames(ArrivalBoard arrivalBoard) {
+		return arrivalBoard.getArrivals().stream().map(Arrival::getTrainName).collect(toList());
+	}
+
 	private List<String> getTrainNames(DepartureBoard departureBoard) {
 		return departureBoard.getDepartures().stream().map(Departure::getTrainName).collect(toList());
 	}
