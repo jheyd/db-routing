@@ -16,7 +16,7 @@ public class BahnApi {
 
 	private ObjectMapper objectMapper;
 
-	public BahnApi(){
+	public BahnApi() {
 		objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
@@ -28,8 +28,8 @@ public class BahnApi {
 
 	private URL buildLocationNameUrl(String name) throws MalformedURLException {
 		return new URL(API_BASE + "/location.name?format=json"
-					+ "&authKey=" + API_KEY
-					+ "&input=" + name);
+				+ "&authKey=" + API_KEY
+				+ "&input=" + name);
 	}
 
 	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time) throws IOException {
@@ -39,7 +39,6 @@ public class BahnApi {
 	}
 
 	private URL buildDepartureScheduleUrl(Location location, LocalDate date, LocalTime time) throws MalformedURLException {
-		System.out.println();
 		return new URL(API_BASE
 				+ "/departureBoard"
 				+ "?format=json"
@@ -47,5 +46,19 @@ public class BahnApi {
 				+ "&id=" + location.getId()
 				+ "&date=" + date
 				+ "&time=" + time);
+	}
+
+	private URL buildArrivalScheduleUrl(Location location, LocalDate date, LocalTime time) throws MalformedURLException {
+		return new URL(API_BASE
+				+ "/arrivalBoard"
+				+ "?format=json"
+				+ "&authKey=" + API_KEY
+				+ "&id=" + location.getId()
+				+ "&date=" + date
+				+ "&time=" + time);
+	}
+
+	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) {
+		throw new UnsupportedOperationException();
 	}
 }
