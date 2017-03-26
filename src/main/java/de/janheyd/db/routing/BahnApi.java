@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class BahnApi {
 
@@ -30,4 +32,20 @@ public class BahnApi {
 					+ "&input=" + name);
 	}
 
+	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time) throws IOException {
+		URL url = buildDepartureScheduleUrl(location, date, time);
+		System.out.println(url);
+		return objectMapper.readValue(url, DepartureBoardResponse.class).departureBoard;
+	}
+
+	private URL buildDepartureScheduleUrl(Location location, LocalDate date, LocalTime time) throws MalformedURLException {
+		System.out.println();
+		return new URL(API_BASE
+				+ "/departureBoard"
+				+ "?format=json"
+				+ "&authKey=" + API_KEY
+				+ "&id=" + location.getId()
+				+ "&date=" + date
+				+ "&time=" + time);
+	}
 }
