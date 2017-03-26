@@ -1,6 +1,8 @@
-package de.janheyd.db.routing;
+package de.janheyd.db.routing.bahnapi.departure;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.janheyd.db.routing.bahnapi.location.Location;
+import de.janheyd.db.routing.bahnapi.common.Stop;
 
 import java.util.List;
 

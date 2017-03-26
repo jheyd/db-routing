@@ -1,4 +1,4 @@
-package de.janheyd.db.routing;
+package de.janheyd.db.routing.bahnapi.location;
 
 public class Location {
 

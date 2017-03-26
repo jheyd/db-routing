@@ -1,5 +1,10 @@
-package de.janheyd.db.routing;
+package de.janheyd.db.routing.bahnapi;
 
+import de.janheyd.db.routing.bahnapi.arrival.Arrival;
+import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
+import de.janheyd.db.routing.bahnapi.departure.Departure;
+import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
+import de.janheyd.db.routing.bahnapi.location.Location;
 import org.junit.Test;
 
 import java.time.LocalDate;

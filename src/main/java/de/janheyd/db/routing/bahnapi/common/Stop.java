@@ -1,4 +1,6 @@
-package de.janheyd.db.routing;
+package de.janheyd.db.routing.bahnapi.common;
+
+import de.janheyd.db.routing.bahnapi.location.Location;
 
 import java.time.LocalDateTime;
 

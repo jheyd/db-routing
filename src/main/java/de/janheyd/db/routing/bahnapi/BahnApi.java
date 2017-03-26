@@ -1,7 +1,14 @@
-package de.janheyd.db.routing;
+package de.janheyd.db.routing.bahnapi;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
+import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoardResponse;
+import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
+import de.janheyd.db.routing.bahnapi.departure.DepartureBoardResponse;
+import de.janheyd.db.routing.bahnapi.location.Location;
+import de.janheyd.db.routing.bahnapi.location.LocationList;
+import de.janheyd.db.routing.bahnapi.location.LocationResponse;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

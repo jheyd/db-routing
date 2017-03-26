@@ -1,4 +1,4 @@
-package de.janheyd.db.routing;
+package de.janheyd.db.routing.bahnapi.departure;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
