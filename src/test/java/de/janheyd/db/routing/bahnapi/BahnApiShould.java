@@ -2,6 +2,7 @@ package de.janheyd.db.routing.bahnapi;
 
 import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
+import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
 import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
 import de.janheyd.db.routing.bahnapi.location.Location;
@@ -58,6 +59,18 @@ public class BahnApiShould {
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
 		assertThat(getTrainNames(arrivalBoard).get(0), is("EN 471"));
+	}
+
+	@Test
+	public void resolveJourneyDetailRefWithCorrectFirstStopName() throws Exception {
+		BahnApi bahnApi = new BahnApi();
+
+		String url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?ref=798102%2F271193%2F122122%2F204973%2F80%3Fdate%3D2017-01-01%26station_evaId%3D8000291%26station_type%3Ddep%26authKey%3DDBhackFrankfurt0316%26lang%3Den%26format%3Djson%26";
+		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
+		journeyDetailRef.url = url;
+		List<Stop> stops = bahnApi.getStops(journeyDetailRef);
+
+		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
 	}
 
 	private List<String> getTrainNames(ArrivalBoard arrivalBoard) {

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoardResponse;
+import de.janheyd.db.routing.bahnapi.common.JourneyDetailResponse;
+import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
 import de.janheyd.db.routing.bahnapi.departure.DepartureBoardResponse;
 import de.janheyd.db.routing.bahnapi.location.Location;
@@ -15,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class BahnApi {
 
@@ -55,7 +58,7 @@ public class BahnApi {
 				+ "&time=" + time);
 	}
 
-	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) throws IOException{
+	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) throws IOException {
 		URL url = buildArrivalScheduleUrl(location, date, time);
 		return objectMapper.readValue(url, ArrivalBoardResponse.class).arrivalBoard;
 	}
@@ -68,6 +71,15 @@ public class BahnApi {
 				+ "&id=" + location.getId()
 				+ "&date=" + date
 				+ "&time=" + time);
+	}
+
+	public List<Stop> getStops(JourneyDetailRef journeyDetailRef) throws IOException {
+		URL url = buildJourneyDetailUrl(journeyDetailRef);
+		return objectMapper.readValue(url, JourneyDetailResponse.class).journeyDetail.stops.stops;
+	}
+
+	private URL buildJourneyDetailUrl(JourneyDetailRef journeyDetailRef) throws MalformedURLException {
+		return new URL(journeyDetailRef.url);
 	}
 
 }
