@@ -21,6 +21,8 @@ import java.util.List;
 
 public class BahnApi {
 
+	// TODO: optimization (caching, multiple async requests (esp for getStops))
+
 	public static final String API_KEY = "DBhackFrankfurt0316";
 	public static final String API_BASE = "https://open-api.bahn.de/bin/rest.exe";
 

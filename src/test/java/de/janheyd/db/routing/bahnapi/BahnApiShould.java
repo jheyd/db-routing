@@ -17,6 +17,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
+/*
+ * TODO: decouple tests from live API, replace with mock using locally stored data
+ * This was an initial decision to be able to write an API wrapper and get familiar with the live API at the same time.
+ * Since familiarity with the live API is no longer an issue but reliance on the live API turns out to be one,
+ * this should be changed.
+ */
 public class BahnApiShould {
 
 	BahnApi bahnApi = new BahnApi();
