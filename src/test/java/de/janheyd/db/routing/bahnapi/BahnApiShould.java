@@ -19,9 +19,10 @@ import static org.hamcrest.Matchers.is;
 
 public class BahnApiShould {
 
+	BahnApi bahnApi = new BahnApi();
+
 	@Test
 	public void findKarlsruhe() throws Exception {
-		BahnApi bahnApi = new BahnApi();
 
 		Location location = bahnApi.findLocationByName("Karlsruhe").getFirstMatch();
 
@@ -30,7 +31,6 @@ public class BahnApiShould {
 
 	@Test
 	public void findOldenburg() throws Exception {
-		BahnApi bahnApi = new BahnApi();
 
 		Location location = bahnApi.findLocationByName("Oldenburg").getFirstMatch();
 
@@ -39,7 +39,6 @@ public class BahnApiShould {
 
 	@Test
 	public void get20OldenburgDeparturesWithCorrectTrainNames() throws Exception {
-		BahnApi bahnApi = new BahnApi();
 
 		DepartureBoard departureBoard = bahnApi.getDepartureSchedule(new Location("008000291", "Oldenburg(Oldb)"),
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
@@ -53,7 +52,6 @@ public class BahnApiShould {
 
 	@Test
 	public void get1KarlsruheArrivalWithCorrectTrainName() throws Exception {
-		BahnApi bahnApi = new BahnApi();
 
 		ArrivalBoard arrivalBoard = bahnApi.getArrivalSchedule(new Location("008000191", "Karlsruhe Hbf"),
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
@@ -63,11 +61,16 @@ public class BahnApiShould {
 
 	@Test
 	public void resolveJourneyDetailRefWithCorrectFirstStopName() throws Exception {
-		BahnApi bahnApi = new BahnApi();
-
-		String url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?ref=798102%2F271193%2F122122%2F204973%2F80%3Fdate%3D2017-01-01%26station_evaId%3D8000291%26station_type%3Ddep%26authKey%3DDBhackFrankfurt0316%26lang%3Den%26format%3Djson%26";
 		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
-		journeyDetailRef.url = url;
+		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
+				"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
+				"date%3D2017-01-01%26" +
+				"station_evaId%3D8000291%26" +
+				"station_type%3Ddep%26" +
+				"authKey%3DDBhackFrankfurt0316%26" +
+				"lang%3Den" +
+				"%26format%3Djson%26";
+		
 		List<Stop> stops = bahnApi.getStops(journeyDetailRef);
 
 		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
