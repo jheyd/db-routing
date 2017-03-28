@@ -60,8 +60,8 @@ public class TravelSearch {
 			Stop firstStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
 			for (Stop departureStop : departure.stops) {
 				for (Arrival arrival : arrivals) {
-					Stop lastStop = arrival.stops.stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
-					for (Stop arrivalStop : arrival.stops) {
+					Stop lastStop = bahnApi.getStops(arrival).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+					for (Stop arrivalStop : bahnApi.getStops(arrival)) {
 						if (departureStop.getLocation().equals(arrivalStop.getLocation())) {
 							Stop changeStop = createChangeStop(departureStop, arrivalStop);
 							return Optional.of(new Route(firstStop, changeStop, lastStop));
