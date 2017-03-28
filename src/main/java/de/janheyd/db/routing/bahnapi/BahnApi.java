@@ -39,41 +39,61 @@ public class BahnApi {
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	public LocationList findLocationByName(String name)  {
+	public LocationList findLocationByName(String name) {
 		URL url = buildLocationNameUrl(name);
 		return queryApi(url, LocationResponse.class).locationList;
 	}
 
-	public List<Stop> getStops(Departure departure)  {
-		return getStops(departure.getJourneyDetailRef());
-	}
-
-	public List<Stop> getStops(Arrival arrival)  {
-		return getStops(arrival.getJourneyDetailRef());
-	}
-
-	private URL buildLocationNameUrl(String name)  {
+	private URL buildLocationNameUrl(String name) {
 		return buildUrl(API_BASE + "/location.name?format=json"
 				+ "&authKey=" + API_KEY
 				+ "&input=" + name);
 	}
 
-	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time)  {
-		URL url = buildDepartureScheduleUrl(location, date, time);
-		return queryApi(url, DepartureBoardResponse.class).departureBoard;
+	public List<Stop> getStops(Departure departure) {
+		return getStops(departure.getJourneyDetailRef());
 	}
 
-	public <T> T queryApi(URL url, Class<T> clazz){
-		try {
-			return objectMapper.readValue(url, clazz);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public List<Stop> getStops(Arrival arrival) {
+		return getStops(arrival.getJourneyDetailRef());
+	}
+
+	public List<Stop> getStops(JourneyDetailRef journeyDetailRef) {
+		if (!journeyDetailCache.containsKey(journeyDetailRef)) {
+			URL url = buildJourneyDetailUrl(journeyDetailRef);
+			JourneyDetail journeyDetail = queryApi(url, JourneyDetailResponse.class).journeyDetail;
+			journeyDetailCache.put(journeyDetailRef, journeyDetail);
 		}
+		return journeyDetailCache.get(journeyDetailRef).stops.stops;
+	}
+
+	private URL buildJourneyDetailUrl(JourneyDetailRef journeyDetailRef) {
+		return buildUrl(journeyDetailRef.url);
+	}
+
+	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time) {
+		URL url = buildDepartureScheduleUrl(location, date, time);
+		return queryApi(url, DepartureBoardResponse.class).departureBoard;
 	}
 
 	private URL buildDepartureScheduleUrl(Location location, LocalDate date, LocalTime time) {
 		return buildUrl(API_BASE
 				+ "/departureBoard"
+				+ "?format=json"
+				+ "&authKey=" + API_KEY
+				+ "&id=" + location.getId()
+				+ "&date=" + date
+				+ "&time=" + time);
+	}
+
+	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) {
+		URL url = buildArrivalScheduleUrl(location, date, time);
+		return queryApi(url, ArrivalBoardResponse.class).arrivalBoard;
+	}
+
+	private URL buildArrivalScheduleUrl(Location location, LocalDate date, LocalTime time) {
+		return buildUrl(API_BASE
+				+ "/arrivalBoard"
 				+ "?format=json"
 				+ "&authKey=" + API_KEY
 				+ "&id=" + location.getId()
@@ -89,32 +109,12 @@ public class BahnApi {
 		}
 	}
 
-	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time)  {
-		URL url = buildArrivalScheduleUrl(location, date, time);
-		return queryApi(url, ArrivalBoardResponse.class).arrivalBoard;
-	}
-
-	private URL buildArrivalScheduleUrl(Location location, LocalDate date, LocalTime time)  {
-		return buildUrl(API_BASE
-				+ "/arrivalBoard"
-				+ "?format=json"
-				+ "&authKey=" + API_KEY
-				+ "&id=" + location.getId()
-				+ "&date=" + date
-				+ "&time=" + time);
-	}
-
-	public List<Stop> getStops(JourneyDetailRef journeyDetailRef)  {
-		if(!journeyDetailCache.containsKey(journeyDetailRef)){
-			URL url = buildJourneyDetailUrl(journeyDetailRef);
-			JourneyDetail journeyDetail = queryApi(url, JourneyDetailResponse.class).journeyDetail;
-			journeyDetailCache.put(journeyDetailRef, journeyDetail);
+	private <T> T queryApi(URL url, Class<T> clazz) {
+		try {
+			return objectMapper.readValue(url, clazz);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		return journeyDetailCache.get(journeyDetailRef).stops.stops;
-	}
-
-	private URL buildJourneyDetailUrl(JourneyDetailRef journeyDetailRef)  {
-		return buildUrl(journeyDetailRef.url);
 	}
 
 }
