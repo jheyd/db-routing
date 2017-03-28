@@ -73,8 +73,4 @@ public class TravelSearch {
 		LocalDateTime changeDeparture = arrivalStop.getDeparture();
 		return new Stop(changeLocation, changeArrival, changeDeparture);
 	}
-
-	private List<Stop> getStops(Departure departure) {
-		throw new UnsupportedOperationException();
-	}
 }
