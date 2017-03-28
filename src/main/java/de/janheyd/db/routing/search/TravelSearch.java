@@ -22,11 +22,6 @@ public class TravelSearch {
 	}
 
 	public Optional<Route> findRoute(String startName, String destinationName, LocalDate date) throws IOException {
-		/*
-		 * TODO: remove "stops" fields on Arrival and Departure and use BahnApi.getStops instead
-		 * This would enable on-demand retrieval of JourneyDetails which is highly preferable for finding
-		 * routes with more than 1 change.
-		 */
 		Location start = bahnApi.findLocationByName(startName).getFirstMatch();
 		Location destination = bahnApi.findLocationByName(destinationName).getFirstMatch();
 		Optional<Route> directTrip = findDirectRoute(date, start, destination);
