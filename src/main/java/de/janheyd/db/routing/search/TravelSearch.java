@@ -1,10 +1,10 @@
 package de.janheyd.db.routing.search;
 
-import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.BahnApi;
+import de.janheyd.db.routing.bahnapi.arrival.Arrival;
+import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
 import de.janheyd.db.routing.bahnapi.location.Location;
-import de.janheyd.db.routing.bahnapi.common.Stop;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -43,8 +43,12 @@ public class TravelSearch {
 	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) throws IOException {
 		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
 		return departures.stream()
-				.filter(departure -> departure.willReach(destination))
-				.map(departure -> new Route(departure.getStop(start), departure.getStop(destination)))
+				.filter(departure -> departure.stops.stream().anyMatch(stop -> stop.getLocation().equals(destination)))
+				.map(departure -> {
+					Stop firstStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
+					Stop lastStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+					return new Route(firstStop, lastStop);
+				})
 				.findFirst();
 	}
 
@@ -53,12 +57,12 @@ public class TravelSearch {
 		List<Arrival> arrivals = bahnApi.getArrivalSchedule(destination, date, LocalTime.of(5, 0)).getArrivals();
 		// TODO: refactor these loops into something nicer
 		for (Departure departure : departures) {
+			Stop firstStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
 			for (Stop departureStop : departure.stops) {
 				for (Arrival arrival : arrivals) {
+					Stop lastStop = arrival.stops.stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
 					for (Stop arrivalStop : arrival.stops) {
 						if (departureStop.getLocation().equals(arrivalStop.getLocation())) {
-							Stop firstStop = departure.getStop(start);
-							Stop lastStop = arrival.getStop(destination);
 							Stop changeStop = createChangeStop(departureStop, arrivalStop);
 							return Optional.of(new Route(firstStop, changeStop, lastStop));
 						}
