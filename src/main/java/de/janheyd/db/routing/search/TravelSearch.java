@@ -6,7 +6,6 @@ import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
 import de.janheyd.db.routing.bahnapi.location.Location;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,7 +20,7 @@ public class TravelSearch {
 		this.bahnApi = bahnApi;
 	}
 
-	public Optional<Route> findRoute(String startName, String destinationName, LocalDate date) throws IOException {
+	public Optional<Route> findRoute(String startName, String destinationName, LocalDate date) {
 		Location start = bahnApi.findLocationByName(startName).getFirstMatch();
 		Location destination = bahnApi.findLocationByName(destinationName).getFirstMatch();
 		Optional<Route> directTrip = findDirectRoute(date, start, destination);
@@ -35,7 +34,7 @@ public class TravelSearch {
 		 */
 	}
 
-	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) throws IOException {
+	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) {
 		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
 		return departures.stream()
 				.filter(departure -> bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination)))
@@ -47,7 +46,7 @@ public class TravelSearch {
 				.findFirst();
 	}
 
-	private Optional<Route> findOneChangeRoute(LocalDate date, Location start, Location destination) throws IOException {
+	private Optional<Route> findOneChangeRoute(LocalDate date, Location start, Location destination) {
 		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
 		List<Arrival> arrivals = bahnApi.getArrivalSchedule(destination, date, LocalTime.of(5, 0)).getArrivals();
 		// TODO: refactor these loops into something nicer
