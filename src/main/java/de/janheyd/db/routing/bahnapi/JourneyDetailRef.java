@@ -4,7 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class JourneyDetailRef {
 	@JsonProperty("ref")
-	String url;
+	public String url;
+
+	public JourneyDetailRef() {
+	}
+
+	public JourneyDetailRef(String url) {
+		this.url = url;
+	}
 
 	@Override
 	public boolean equals(Object o) {
