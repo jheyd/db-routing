@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoardResponse;
+import de.janheyd.db.routing.bahnapi.common.JourneyDetail;
 import de.janheyd.db.routing.bahnapi.common.JourneyDetailResponse;
 import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
@@ -19,11 +20,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 public class BahnApi {
 
 	// TODO: optimization (caching, multiple async requests (esp for getStops))
+
+	private HashMap<JourneyDetailRef, JourneyDetail> journeyDetailCache = new HashMap<>();
 
 	public static final String API_KEY = "DBhackFrankfurt0316";
 	public static final String API_BASE = "https://open-api.bahn.de/bin/rest.exe";
@@ -102,8 +106,12 @@ public class BahnApi {
 	}
 
 	public List<Stop> getStops(JourneyDetailRef journeyDetailRef)  {
-		URL url = buildJourneyDetailUrl(journeyDetailRef);
-		return queryApi(url, JourneyDetailResponse.class).journeyDetail.stops.stops;
+		if(!journeyDetailCache.containsKey(journeyDetailRef)){
+			URL url = buildJourneyDetailUrl(journeyDetailRef);
+			JourneyDetail journeyDetail = queryApi(url, JourneyDetailResponse.class).journeyDetail;
+			journeyDetailCache.put(journeyDetailRef, journeyDetail);
+		}
+		return journeyDetailCache.get(journeyDetailRef).stops.stops;
 	}
 
 	private URL buildJourneyDetailUrl(JourneyDetailRef journeyDetailRef)  {
