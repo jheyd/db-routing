@@ -43,21 +43,11 @@ public class TravelSearch {
 	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) throws IOException {
 		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
 		return departures.stream()
-				.filter(departure -> {
-					try {
-						return bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination));
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				})
+				.filter(departure -> bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination)))
 				.map(departure -> {
-					try {
-						Stop firstStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
-						Stop lastStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
-						return new Route(firstStop, lastStop);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
+					Stop firstStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
+					Stop lastStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+					return new Route(firstStop, lastStop);
 				})
 				.findFirst();
 	}

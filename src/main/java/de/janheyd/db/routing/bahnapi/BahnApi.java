@@ -35,33 +35,41 @@ public class BahnApi {
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	public LocationList findLocationByName(String name) throws IOException {
+	public LocationList findLocationByName(String name)  {
 		URL url = buildLocationNameUrl(name);
-		return objectMapper.readValue(url, LocationResponse.class).locationList;
+		return queryApi(url, LocationResponse.class).locationList;
 	}
 
-	public List<Stop> getStops(Departure departure) throws IOException {
+	public List<Stop> getStops(Departure departure)  {
 		return getStops(departure.getJourneyDetailRef());
 	}
 
-	public List<Stop> getStops(Arrival arrival) throws IOException {
+	public List<Stop> getStops(Arrival arrival)  {
 		return getStops(arrival.getJourneyDetailRef());
 	}
 
-	private URL buildLocationNameUrl(String name) throws MalformedURLException {
-		return new URL(API_BASE + "/location.name?format=json"
+	private URL buildLocationNameUrl(String name)  {
+		return buildUrl(API_BASE + "/location.name?format=json"
 				+ "&authKey=" + API_KEY
 				+ "&input=" + name);
 	}
 
-	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time) throws IOException {
+	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time)  {
 		URL url = buildDepartureScheduleUrl(location, date, time);
 		System.out.println(url);
-		return objectMapper.readValue(url, DepartureBoardResponse.class).departureBoard;
+		return queryApi(url, DepartureBoardResponse.class).departureBoard;
 	}
 
-	private URL buildDepartureScheduleUrl(Location location, LocalDate date, LocalTime time) throws MalformedURLException {
-		return new URL(API_BASE
+	public <T> T queryApi(URL url, Class<T> clazz){
+		try {
+			return objectMapper.readValue(url, clazz);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private URL buildDepartureScheduleUrl(Location location, LocalDate date, LocalTime time) {
+		return buildUrl(API_BASE
 				+ "/departureBoard"
 				+ "?format=json"
 				+ "&authKey=" + API_KEY
@@ -70,13 +78,21 @@ public class BahnApi {
 				+ "&time=" + time);
 	}
 
-	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) throws IOException {
-		URL url = buildArrivalScheduleUrl(location, date, time);
-		return objectMapper.readValue(url, ArrivalBoardResponse.class).arrivalBoard;
+	private URL buildUrl(String url) {
+		try {
+			return new URL(url);
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	private URL buildArrivalScheduleUrl(Location location, LocalDate date, LocalTime time) throws MalformedURLException {
-		return new URL(API_BASE
+	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time)  {
+		URL url = buildArrivalScheduleUrl(location, date, time);
+		return queryApi(url, ArrivalBoardResponse.class).arrivalBoard;
+	}
+
+	private URL buildArrivalScheduleUrl(Location location, LocalDate date, LocalTime time)  {
+		return buildUrl(API_BASE
 				+ "/arrivalBoard"
 				+ "?format=json"
 				+ "&authKey=" + API_KEY
@@ -85,13 +101,13 @@ public class BahnApi {
 				+ "&time=" + time);
 	}
 
-	public List<Stop> getStops(JourneyDetailRef journeyDetailRef) throws IOException {
+	public List<Stop> getStops(JourneyDetailRef journeyDetailRef)  {
 		URL url = buildJourneyDetailUrl(journeyDetailRef);
-		return objectMapper.readValue(url, JourneyDetailResponse.class).journeyDetail.stops.stops;
+		return queryApi(url, JourneyDetailResponse.class).journeyDetail.stops.stops;
 	}
 
-	private URL buildJourneyDetailUrl(JourneyDetailRef journeyDetailRef) throws MalformedURLException {
-		return new URL(journeyDetailRef.url);
+	private URL buildJourneyDetailUrl(JourneyDetailRef journeyDetailRef)  {
+		return buildUrl(journeyDetailRef.url);
 	}
 
 }
