@@ -2,6 +2,7 @@ package de.janheyd.db.routing.bahnapi;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoardResponse;
 import de.janheyd.db.routing.bahnapi.common.JourneyDetailResponse;
@@ -41,6 +42,10 @@ public class BahnApi {
 
 	public List<Stop> getStops(Departure departure) throws IOException {
 		return getStops(departure.getJourneyDetailRef());
+	}
+
+	public List<Stop> getStops(Arrival arrival) throws IOException {
+		return getStops(arrival.getJourneyDetailRef());
 	}
 
 	private URL buildLocationNameUrl(String name) throws MalformedURLException {
