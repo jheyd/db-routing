@@ -6,6 +6,7 @@ import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoardResponse;
 import de.janheyd.db.routing.bahnapi.common.JourneyDetailResponse;
 import de.janheyd.db.routing.bahnapi.common.Stop;
+import de.janheyd.db.routing.bahnapi.departure.Departure;
 import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
 import de.janheyd.db.routing.bahnapi.departure.DepartureBoardResponse;
 import de.janheyd.db.routing.bahnapi.location.Location;
@@ -36,6 +37,10 @@ public class BahnApi {
 	public LocationList findLocationByName(String name) throws IOException {
 		URL url = buildLocationNameUrl(name);
 		return objectMapper.readValue(url, LocationResponse.class).locationList;
+	}
+
+	public List<Stop> getStops(Departure departure) throws IOException {
+		return getStops(departure.getJourneyDetailRef());
 	}
 
 	private URL buildLocationNameUrl(String name) throws MalformedURLException {

@@ -82,6 +82,24 @@ public class BahnApiShould {
 		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
 	}
 
+	@Test
+	public void resolveJourneyDetailRefFromDepartureWithCorrectFirstStopName() throws Exception {
+		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
+		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
+			"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
+			"date%3D2017-01-01%26" +
+			"station_evaId%3D8000291%26" +
+			"station_type%3Ddep%26" +
+			"authKey%3DDBhackFrankfurt0316%26" +
+			"lang%3Den" +
+			"%26format%3Djson%26";
+		Departure departure = new Departure(journeyDetailRef);
+
+		List<Stop> stops = bahnApi.getStops(departure);
+
+		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
+	}
+
 	private List<String> getTrainNames(ArrivalBoard arrivalBoard) {
 		return arrivalBoard.getArrivals().stream().map(Arrival::getTrainName).collect(toList());
 	}
