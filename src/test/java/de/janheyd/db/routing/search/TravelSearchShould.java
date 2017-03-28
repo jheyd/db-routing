@@ -40,10 +40,11 @@ public class TravelSearchShould {
 
 	@Test
 	public void findDirectRoute() throws Exception {
+		Departure departure = new Departure();
 		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(
-				new Departure(asList(createStop(OLDENBURG, 4, 6), createStop(KARLSRUHE, 7, 8)))
+				departure
 		)));
-
+		when(bahnApi.getStops(departure)).thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(KARLSRUHE, 7, 8)));
 		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
 
 		assertThat(stops.get(0).getLocation(), is(OLDENBURG));
@@ -52,9 +53,11 @@ public class TravelSearchShould {
 
 	@Test
 	public void findRouteWithOneChange() throws Exception {
+		Departure departure = new Departure();
 		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(
-				new Departure(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)))
+				departure
 		)));
+		when(bahnApi.getStops(departure)).thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)));
 		Arrival arrival = new Arrival();
 		when(bahnApi.getArrivalSchedule(KARLSRUHE, DATE, LocalTime.of(5, 0))).thenReturn(new ArrivalBoard(asList(
 				arrival

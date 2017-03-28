@@ -43,11 +43,21 @@ public class TravelSearch {
 	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) throws IOException {
 		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
 		return departures.stream()
-				.filter(departure -> departure.stops.stream().anyMatch(stop -> stop.getLocation().equals(destination)))
+				.filter(departure -> {
+					try {
+						return bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination));
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				})
 				.map(departure -> {
-					Stop firstStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
-					Stop lastStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
-					return new Route(firstStop, lastStop);
+					try {
+						Stop firstStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
+						Stop lastStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+						return new Route(firstStop, lastStop);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
 				})
 				.findFirst();
 	}
@@ -57,8 +67,8 @@ public class TravelSearch {
 		List<Arrival> arrivals = bahnApi.getArrivalSchedule(destination, date, LocalTime.of(5, 0)).getArrivals();
 		// TODO: refactor these loops into something nicer
 		for (Departure departure : departures) {
-			Stop firstStop = departure.stops.stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
-			for (Stop departureStop : departure.stops) {
+			Stop firstStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
+			for (Stop departureStop : bahnApi.getStops(departure)) {
 				for (Arrival arrival : arrivals) {
 					Stop lastStop = bahnApi.getStops(arrival).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
 					for (Stop arrivalStop : bahnApi.getStops(arrival)) {
