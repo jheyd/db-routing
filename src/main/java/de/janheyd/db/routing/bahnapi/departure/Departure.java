@@ -7,7 +7,7 @@ public class Departure {
 
 	@JsonProperty("name")
 	public String trainName;
-	@JsonProperty
+	@JsonProperty("JourneyDetailRef")
 	public JourneyDetailRef journeyDetailRef;
 
 	public Departure() {

@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 /*
  * TODO: decouple tests from live API, replace with mock using locally stored data
@@ -76,7 +77,7 @@ public class BahnApiShould {
 				"authKey%3DDBhackFrankfurt0316%26" +
 				"lang%3Den" +
 				"%26format%3Djson%26";
-		
+
 		List<Stop> stops = bahnApi.getStops(journeyDetailRef);
 
 		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
@@ -86,13 +87,13 @@ public class BahnApiShould {
 	public void resolveJourneyDetailRefFromDepartureWithCorrectFirstStopName() throws Exception {
 		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
 		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
-			"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
-			"date%3D2017-01-01%26" +
-			"station_evaId%3D8000291%26" +
-			"station_type%3Ddep%26" +
-			"authKey%3DDBhackFrankfurt0316%26" +
-			"lang%3Den" +
-			"%26format%3Djson%26";
+				"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
+				"date%3D2017-01-01%26" +
+				"station_evaId%3D8000291%26" +
+				"station_type%3Ddep%26" +
+				"authKey%3DDBhackFrankfurt0316%26" +
+				"lang%3Den" +
+				"%26format%3Djson%26";
 		Departure departure = new Departure(journeyDetailRef);
 
 		List<Stop> stops = bahnApi.getStops(departure);
@@ -104,18 +105,26 @@ public class BahnApiShould {
 	public void resolveJourneyDetailRefFromArrivalWithCorrectFirstStopName() throws Exception {
 		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
 		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
-			"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
-			"date%3D2017-01-01%26" +
-			"station_evaId%3D8000291%26" +
-			"station_type%3Ddep%26" +
-			"authKey%3DDBhackFrankfurt0316%26" +
-			"lang%3Den" +
-			"%26format%3Djson%26";
+				"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
+				"date%3D2017-01-01%26" +
+				"station_evaId%3D8000291%26" +
+				"station_type%3Ddep%26" +
+				"authKey%3DDBhackFrankfurt0316%26" +
+				"lang%3Den" +
+				"%26format%3Djson%26";
 		Arrival arrival = new Arrival(journeyDetailRef);
 
 		List<Stop> stops = bahnApi.getStops(arrival);
 
 		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
+	}
+
+	@Test
+	public void getJourneyDetailRef() throws Exception {
+		DepartureBoard departureSchedule = bahnApi.getDepartureSchedule(new Location("8000152", "Hannover Hbf"),
+				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
+
+		assertThat(departureSchedule.getDepartures().get(0).getJourneyDetailRef(), is(notNullValue()));
 	}
 
 	private List<String> getTrainNames(ArrivalBoard arrivalBoard) {
