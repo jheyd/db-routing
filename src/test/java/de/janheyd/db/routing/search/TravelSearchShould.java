@@ -5,7 +5,6 @@ import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
 import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
-import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
 import de.janheyd.db.routing.bahnapi.location.Location;
 import de.janheyd.db.routing.bahnapi.location.LocationList;
 import org.junit.Before;
@@ -41,9 +40,9 @@ public class TravelSearchShould {
 	@Test
 	public void findDirectRoute() throws Exception {
 		Departure departure = new Departure();
-		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(
+		when(bahnApi.getDepartures(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(asList(
 				departure
-		)));
+		));
 		when(bahnApi.getStops(departure)).thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(KARLSRUHE, 7, 8)));
 		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
 
@@ -54,9 +53,9 @@ public class TravelSearchShould {
 	@Test
 	public void findRouteWithOneChange() throws Exception {
 		Departure departure = new Departure();
-		when(bahnApi.getDepartureSchedule(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(new DepartureBoard(asList(
+		when(bahnApi.getDepartures(OLDENBURG, DATE, LocalTime.of(5, 0))).thenReturn(asList(
 				departure
-		)));
+		));
 		when(bahnApi.getStops(departure)).thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)));
 		Arrival arrival = new Arrival();
 		when(bahnApi.getArrivalSchedule(KARLSRUHE, DATE, LocalTime.of(5, 0))).thenReturn(new ArrivalBoard(asList(

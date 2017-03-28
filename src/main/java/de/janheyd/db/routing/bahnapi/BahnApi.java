@@ -71,7 +71,11 @@ public class BahnApi {
 		return buildUrl(journeyDetailRef.url);
 	}
 
-	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time) {
+	public List<Departure> getDepartures(Location location, LocalDate date, LocalTime time) {
+		return getDepartureSchedule(location, date, time).getDepartures();
+	}
+
+	private DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time) {
 		URL url = buildDepartureScheduleUrl(location, date, time);
 		return queryApi(url, DepartureBoardResponse.class).departureBoard;
 	}
@@ -84,6 +88,10 @@ public class BahnApi {
 				+ "&id=" + location.getId()
 				+ "&date=" + date
 				+ "&time=" + time);
+	}
+
+	public List<Arrival> getArrivals(Location location, LocalDate date, LocalTime time) {
+		return getArrivalSchedule(location, date, time).getArrivals();
 	}
 
 	public ArrivalBoard getArrivalSchedule(Location location, LocalDate date, LocalTime time) {

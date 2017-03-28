@@ -35,7 +35,7 @@ public class TravelSearch {
 	}
 
 	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) {
-		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
+		List<Departure> departures = bahnApi.getDepartures(start, date, LocalTime.of(5, 0));
 		return departures.stream()
 				.filter(departure -> bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination)))
 				.map(departure -> {
@@ -47,7 +47,7 @@ public class TravelSearch {
 	}
 
 	private Optional<Route> findOneChangeRoute(LocalDate date, Location start, Location destination) {
-		List<Departure> departures = bahnApi.getDepartureSchedule(start, date, LocalTime.of(5, 0)).getDepartures();
+		List<Departure> departures = bahnApi.getDepartures(start, date, LocalTime.of(5, 0));
 		List<Arrival> arrivals = bahnApi.getArrivalSchedule(destination, date, LocalTime.of(5, 0)).getArrivals();
 		// TODO: refactor these loops into something nicer
 		for (Departure departure : departures) {

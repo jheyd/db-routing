@@ -4,7 +4,6 @@ import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
 import de.janheyd.db.routing.bahnapi.common.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
-import de.janheyd.db.routing.bahnapi.departure.DepartureBoard;
 import de.janheyd.db.routing.bahnapi.location.Location;
 import org.junit.Test;
 
@@ -59,10 +58,10 @@ public class BahnApiShould {
 	@Test
 	public void get20OldenburgDeparturesWithCorrectTrainNames() throws Exception {
 
-		DepartureBoard departureBoard = bahnApi.getDepartureSchedule(OLDENBURG,
+		List<Departure> departures = bahnApi.getDepartures(OLDENBURG,
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
-		assertThat(getTrainNames(departureBoard), contains(
+		assertThat(getTrainNames(departures), contains(
 				"IC 2035", "IC 2436", "ICE 535", "IC 2037", "IC 2434",
 				"ICE 537", "IC 2039", "IC 2432", "IC 2431", "IC 2430",
 				"IC 2433", "IC 2038", "IC 2435", "IC 2036", "IC 2437",
@@ -108,18 +107,18 @@ public class BahnApiShould {
 	@Test
 	public void getJourneyDetailRef() throws Exception {
 
-		DepartureBoard departureSchedule = bahnApi.getDepartureSchedule(HANNOVER,
+		List<Departure> departures = bahnApi.getDepartures(HANNOVER,
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
-		assertThat(departureSchedule.getDepartures().get(0).getJourneyDetailRef(), is(notNullValue()));
+		assertThat(departures.get(0).getJourneyDetailRef(), is(notNullValue()));
 	}
 
 	private List<String> getTrainNames(ArrivalBoard arrivalBoard) {
 		return arrivalBoard.getArrivals().stream().map(Arrival::getTrainName).collect(toList());
 	}
 
-	private List<String> getTrainNames(DepartureBoard departureBoard) {
-		return departureBoard.getDepartures().stream().map(Departure::getTrainName).collect(toList());
+	private List<String> getTrainNames(List<Departure> departures) {
+		return departures.stream().map(Departure::getTrainName).collect(toList());
 	}
 
 }
