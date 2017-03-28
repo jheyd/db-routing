@@ -26,6 +26,18 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class BahnApiShould {
 
+	public static final String JOURNEY_DETAIL_URL = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
+			"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
+			"date%3D2017-01-01%26" +
+			"station_evaId%3D8000291%26" +
+			"station_type%3Ddep%26" +
+			"authKey%3DDBhackFrankfurt0316%26" +
+			"lang%3Den" +
+			"%26format%3Djson%26";
+	public static final Location OLDENBURG = new Location("008000291", "Oldenburg(Oldb)");
+	public static final Location KARLSRUHE = new Location("008000191", "Karlsruhe Hbf");
+	public static final Location HANNOVER = new Location("8000152", "Hannover Hbf");
+
 	BahnApi bahnApi = new BahnApi();
 
 	@Test
@@ -33,7 +45,7 @@ public class BahnApiShould {
 
 		Location location = bahnApi.findLocationByName("Karlsruhe").getFirstMatch();
 
-		assertThat(location, is(new Location("008000191", "Karlsruhe Hbf")));
+		assertThat(location, is(KARLSRUHE));
 	}
 
 	@Test
@@ -41,13 +53,13 @@ public class BahnApiShould {
 
 		Location location = bahnApi.findLocationByName("Oldenburg").getFirstMatch();
 
-		assertThat(location, is(new Location("008000291", "Oldenburg(Oldb)")));
+		assertThat(location, is(OLDENBURG));
 	}
 
 	@Test
 	public void get20OldenburgDeparturesWithCorrectTrainNames() throws Exception {
 
-		DepartureBoard departureBoard = bahnApi.getDepartureSchedule(new Location("008000291", "Oldenburg(Oldb)"),
+		DepartureBoard departureBoard = bahnApi.getDepartureSchedule(OLDENBURG,
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
 		assertThat(getTrainNames(departureBoard), contains(
@@ -60,7 +72,7 @@ public class BahnApiShould {
 	@Test
 	public void get1KarlsruheArrivalWithCorrectTrainName() throws Exception {
 
-		ArrivalBoard arrivalBoard = bahnApi.getArrivalSchedule(new Location("008000191", "Karlsruhe Hbf"),
+		ArrivalBoard arrivalBoard = bahnApi.getArrivalSchedule(KARLSRUHE,
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
 		assertThat(getTrainNames(arrivalBoard).get(0), is("EN 471"));
@@ -68,60 +80,35 @@ public class BahnApiShould {
 
 	@Test
 	public void resolveJourneyDetailRefWithCorrectFirstStopName() throws Exception {
-		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
-		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
-				"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
-				"date%3D2017-01-01%26" +
-				"station_evaId%3D8000291%26" +
-				"station_type%3Ddep%26" +
-				"authKey%3DDBhackFrankfurt0316%26" +
-				"lang%3Den" +
-				"%26format%3Djson%26";
+		JourneyDetailRef journeyDetailRef = new JourneyDetailRef(JOURNEY_DETAIL_URL);
 
 		List<Stop> stops = bahnApi.getStops(journeyDetailRef);
 
-		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
+		assertThat(stops.get(0).getLocation(), is(HANNOVER));
 	}
 
 	@Test
 	public void resolveJourneyDetailRefFromDepartureWithCorrectFirstStopName() throws Exception {
-		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
-		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
-				"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
-				"date%3D2017-01-01%26" +
-				"station_evaId%3D8000291%26" +
-				"station_type%3Ddep%26" +
-				"authKey%3DDBhackFrankfurt0316%26" +
-				"lang%3Den" +
-				"%26format%3Djson%26";
-		Departure departure = new Departure(journeyDetailRef);
+		Departure departure = new Departure(new JourneyDetailRef(JOURNEY_DETAIL_URL));
 
 		List<Stop> stops = bahnApi.getStops(departure);
 
-		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
+		assertThat(stops.get(0).getLocation(), is(HANNOVER));
 	}
 
 	@Test
 	public void resolveJourneyDetailRefFromArrivalWithCorrectFirstStopName() throws Exception {
-		JourneyDetailRef journeyDetailRef = new JourneyDetailRef();
-		journeyDetailRef.url = "https://open-api.bahn.de/bin/rest.exe/v1.0/journeyDetail?" +
-				"ref=798102%2F271193%2F122122%2F204973%2F80%3F" +
-				"date%3D2017-01-01%26" +
-				"station_evaId%3D8000291%26" +
-				"station_type%3Ddep%26" +
-				"authKey%3DDBhackFrankfurt0316%26" +
-				"lang%3Den" +
-				"%26format%3Djson%26";
-		Arrival arrival = new Arrival(journeyDetailRef);
+		Arrival arrival = new Arrival(new JourneyDetailRef(JOURNEY_DETAIL_URL));
 
 		List<Stop> stops = bahnApi.getStops(arrival);
 
-		assertThat(stops.get(0).getLocation(), is(new Location("8000152", "Hannover Hbf")));
+		assertThat(stops.get(0).getLocation(), is(HANNOVER));
 	}
 
 	@Test
 	public void getJourneyDetailRef() throws Exception {
-		DepartureBoard departureSchedule = bahnApi.getDepartureSchedule(new Location("8000152", "Hannover Hbf"),
+
+		DepartureBoard departureSchedule = bahnApi.getDepartureSchedule(HANNOVER,
 				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
 		assertThat(departureSchedule.getDepartures().get(0).getJourneyDetailRef(), is(notNullValue()));
