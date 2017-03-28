@@ -60,7 +60,6 @@ public class BahnApi {
 
 	public DepartureBoard getDepartureSchedule(Location location, LocalDate date, LocalTime time)  {
 		URL url = buildDepartureScheduleUrl(location, date, time);
-		System.out.println(url);
 		return queryApi(url, DepartureBoardResponse.class).departureBoard;
 	}
 
