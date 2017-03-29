@@ -58,8 +58,7 @@ public class BahnApiShould {
 	@Test
 	public void get20OldenburgDeparturesWithCorrectTrainNames() throws Exception {
 
-		List<Departure> departures = bahnApi.getDepartures(OLDENBURG,
-				LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
+		List<Departure> departures = bahnApi.getDepartures(OLDENBURG, LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
 
 		assertThat(getTrainNames(departures), contains(
 				"IC 2035", "IC 2436", "ICE 535", "IC 2037", "IC 2434",
