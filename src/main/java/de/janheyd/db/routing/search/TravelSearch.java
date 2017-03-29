@@ -37,13 +37,17 @@ public class TravelSearch {
 	private Optional<Route> findDirectRoute(LocalDate date, Location start, Location destination) {
 		List<Departure> departures = bahnApi.getDepartures(start, date, LocalTime.of(5, 0));
 		return departures.stream()
-				.filter(departure -> bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination)))
+				.filter(departure -> containsLocation(destination, departure))
 				.map(departure -> {
-					Stop firstStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
-					Stop lastStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+					Stop firstStop = getStopFor(start, departure);
+					Stop lastStop = getStopFor(destination, departure);
 					return new Route(firstStop, lastStop);
 				})
 				.findFirst();
+	}
+
+	private boolean containsLocation(Location destination, Departure departure) {
+		return bahnApi.getStops(departure).stream().anyMatch(stop -> stop.getLocation().equals(destination));
 	}
 
 	private Optional<Route> findOneChangeRoute(LocalDate date, Location start, Location destination) {
@@ -51,10 +55,10 @@ public class TravelSearch {
 		List<Arrival> arrivals = bahnApi.getArrivalSchedule(destination, date, LocalTime.of(5, 0)).getArrivals();
 		// TODO: refactor these loops into something nicer
 		for (Departure departure : departures) {
-			Stop firstStop = bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
+			Stop firstStop = getStopFor(start, departure);
 			for (Stop departureStop : bahnApi.getStops(departure)) {
 				for (Arrival arrival : arrivals) {
-					Stop lastStop = bahnApi.getStops(arrival).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+					Stop lastStop = getStopFor(destination, arrival);
 					for (Stop arrivalStop : bahnApi.getStops(arrival)) {
 						if (departureStop.getLocation().equals(arrivalStop.getLocation())) {
 							Stop changeStop = createChangeStop(departureStop, arrivalStop);
@@ -65,6 +69,14 @@ public class TravelSearch {
 			}
 		}
 		return Optional.empty();
+	}
+
+	private Stop getStopFor(Location destination, Arrival arrival) {
+		return bahnApi.getStops(arrival).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+	}
+
+	private Stop getStopFor(Location start, Departure departure) {
+		return bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
 	}
 
 	private Stop createChangeStop(Stop departureStop, Stop arrivalStop) {
