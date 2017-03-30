@@ -74,17 +74,19 @@ public class TravelSearch {
 	}
 
 	private Stop getStopFor(Location destination, Arrival arrival) {
-		return bahnApi.getStops(arrival).stream()
-				.filter(stop -> stop.getLocation().equals(destination))
-				.findAny()
+		return findLocation(destination, bahnApi.getStops(arrival))
 				.orElseThrow(() -> new RuntimeException(format("%s does not have Stop for %s", arrival, destination)));
 	}
 
 	private Stop getStopFor(Location start, Departure departure) {
-		return bahnApi.getStops(departure).stream()
-				.filter(stop -> stop.getLocation().equals(start))
-				.findAny()
+		return findLocation(start, bahnApi.getStops(departure))
 				.orElseThrow(() -> new RuntimeException(format("%s does not have Stop for %s", departure, start)));
+	}
+
+	private Optional<Stop> findLocation(Location destination, List<Stop> stops) {
+		return stops.stream()
+				.filter(stop -> stop.getLocation().equals(destination))
+				.findAny();
 	}
 
 	private Stop createChangeStop(Stop departureStop, Stop arrivalStop) {
