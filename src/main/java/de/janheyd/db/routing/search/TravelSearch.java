@@ -12,6 +12,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 public class TravelSearch {
 
 	private BahnApi bahnApi;
@@ -72,11 +74,17 @@ public class TravelSearch {
 	}
 
 	private Stop getStopFor(Location destination, Arrival arrival) {
-		return bahnApi.getStops(arrival).stream().filter(stop -> stop.getLocation().equals(destination)).findAny().get();
+		return bahnApi.getStops(arrival).stream()
+				.filter(stop -> stop.getLocation().equals(destination))
+				.findAny()
+				.orElseThrow(() -> new RuntimeException(format("%s does not have Stop for %s", arrival, destination)));
 	}
 
 	private Stop getStopFor(Location start, Departure departure) {
-		return bahnApi.getStops(departure).stream().filter(stop -> stop.getLocation().equals(start)).findAny().get();
+		return bahnApi.getStops(departure).stream()
+				.filter(stop -> stop.getLocation().equals(start))
+				.findAny()
+				.orElseThrow(() -> new RuntimeException(format("%s does not have Stop for %s", departure, start)));
 	}
 
 	private Stop createChangeStop(Stop departureStop, Stop arrivalStop) {
