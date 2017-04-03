@@ -2,7 +2,7 @@ package de.janheyd.db.routing.bahnapi;
 
 import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
-import de.janheyd.db.routing.bahnapi.common.Stop;
+import de.janheyd.db.routing.bahnapi.journeydetail.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
 import de.janheyd.db.routing.bahnapi.location.Location;
 import org.junit.Test;

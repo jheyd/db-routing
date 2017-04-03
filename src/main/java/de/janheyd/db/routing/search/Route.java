@@ -1,6 +1,6 @@
 package de.janheyd.db.routing.search;
 
-import de.janheyd.db.routing.bahnapi.common.Stop;
+import de.janheyd.db.routing.bahnapi.journeydetail.Stop;
 
 import java.util.List;
 
