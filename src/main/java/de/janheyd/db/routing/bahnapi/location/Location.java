@@ -1,14 +1,13 @@
 package de.janheyd.db.routing.bahnapi.location;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Location {
 
-	public String id;
-	public String name;
+	private String id;
+	private String name;
 
-	public Location() {
-	}
-
-	public Location(String id, String name) {
+	public Location(@JsonProperty("id") String id, @JsonProperty("name") String name) {
 		this.id = id;
 		this.name = name;
 	}
