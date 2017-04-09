@@ -32,9 +32,9 @@ public class BahnApiShould {
 		"authKey%3DDBhackFrankfurt0316%26" +
 		"lang%3Den" +
 		"%26format%3Djson%26";
-	public static final Location OLDENBURG = new Location("008000291", "Oldenburg(Oldb)");
-	public static final Location KARLSRUHE = new Location("008000191", "Karlsruhe Hbf");
-	public static final Location HANNOVER = new Location("8000152", "Hannover Hbf");
+	public static final Location OLDENBURG = new Location(8000291, "Oldenburg(Oldb)");
+	public static final Location KARLSRUHE = new Location(8000191, "Karlsruhe Hbf");
+	public static final Location HANNOVER = new Location(8000152, "Hannover Hbf");
 
 	BahnApi bahnApi = new BahnApi();
 

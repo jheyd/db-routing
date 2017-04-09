@@ -10,10 +10,10 @@ import lombok.ToString;
 @Getter
 public class Location {
 
-	private String id;
+	private int id;
 	private String name;
 
-	public Location(@JsonProperty("id") String id, @JsonProperty("name") String name) {
+	public Location(@JsonProperty("id") int id, @JsonProperty("name") String name) {
 		this.id = id;
 		this.name = name;
 	}

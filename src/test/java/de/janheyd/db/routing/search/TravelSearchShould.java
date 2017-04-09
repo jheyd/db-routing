@@ -3,8 +3,8 @@ package de.janheyd.db.routing.search;
 import de.janheyd.db.routing.bahnapi.BahnApi;
 import de.janheyd.db.routing.bahnapi.arrival.Arrival;
 import de.janheyd.db.routing.bahnapi.arrival.ArrivalBoard;
-import de.janheyd.db.routing.bahnapi.journeydetail.Stop;
 import de.janheyd.db.routing.bahnapi.departure.Departure;
+import de.janheyd.db.routing.bahnapi.journeydetail.Stop;
 import de.janheyd.db.routing.bahnapi.location.Location;
 import de.janheyd.db.routing.bahnapi.location.LocationList;
 import org.junit.Before;
@@ -24,9 +24,9 @@ import static org.mockito.Mockito.when;
 public class TravelSearchShould {
 
 	public static final LocalDate DATE = LocalDate.of(2017, 1, 1);
-	public static final Location OLDENBURG = new Location("008000291", "Oldenburg(Oldb)");
-	public static final Location KARLSRUHE = new Location("008000191", "Karlsruhe Hbf");
-	private static final Location BERLIN = new Location("123456789", "Berlin Hbf");
+	public static final Location OLDENBURG = new Location(8000291, "Oldenburg(Oldb)");
+	public static final Location KARLSRUHE = new Location(8000191, "Karlsruhe Hbf");
+	private static final Location BERLIN = new Location(123456789, "Berlin Hbf");
 
 	BahnApi bahnApi = mock(BahnApi.class);
 	TravelSearch travelSearch = new TravelSearch(bahnApi);
@@ -41,9 +41,9 @@ public class TravelSearchShould {
 	public void findDirectRoute() throws Exception {
 		Departure departure = new Departure();
 		when(bahnApi.getDepartures(OLDENBURG, DATE, LocalTime.of(5, 0)))
-				.thenReturn(asList(departure));
+			.thenReturn(asList(departure));
 		when(bahnApi.getStops(departure))
-				.thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(KARLSRUHE, 7, 8)));
+			.thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(KARLSRUHE, 7, 8)));
 
 		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
 
@@ -55,14 +55,14 @@ public class TravelSearchShould {
 	public void findRouteWithOneChange() throws Exception {
 		Departure departure = new Departure();
 		when(bahnApi.getDepartures(OLDENBURG, DATE, LocalTime.of(5, 0)))
-				.thenReturn(asList(departure));
+			.thenReturn(asList(departure));
 		when(bahnApi.getStops(departure))
-				.thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)));
+			.thenReturn(asList(createStop(OLDENBURG, 4, 6), createStop(BERLIN, 7, 8)));
 		Arrival arrival = new Arrival();
 		when(bahnApi.getArrivalSchedule(KARLSRUHE, DATE, LocalTime.of(5, 0)))
-				.thenReturn(new ArrivalBoard(asList(arrival)));
+			.thenReturn(new ArrivalBoard(asList(arrival)));
 		when(bahnApi.getStops(arrival))
-				.thenReturn(asList(createStop(BERLIN, 9, 10), createStop(KARLSRUHE, 11, 12)));
+			.thenReturn(asList(createStop(BERLIN, 9, 10), createStop(KARLSRUHE, 11, 12)));
 
 		List<Stop> stops = travelSearch.findRoute("Oldenburg", "Karlsruhe", LocalDate.of(2017, 1, 1)).get().getStops();
 

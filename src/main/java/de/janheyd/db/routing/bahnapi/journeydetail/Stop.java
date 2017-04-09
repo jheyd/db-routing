@@ -10,7 +10,7 @@ import java.time.LocalTime;
 public class Stop {
 
 	@JsonProperty("id")
-	public String id;
+	public int id;
 	@JsonProperty("name")
 	public String name;
 	@JsonProperty("arrTime")
