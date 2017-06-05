@@ -106,7 +106,7 @@ public class BahnApiShould {
 	}
 
 	@Test
-	public void getJourneyDetailRef() throws Exception {
+	public void getJourneyDetailRefFromDeparture() throws Exception {
 
 		List<Departure> departures = bahnApi.getDepartures(HANNOVER,
 			LocalDate.of(2017, 1, 1), LocalTime.of(5, 0));
